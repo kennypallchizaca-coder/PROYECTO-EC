@@ -30,13 +30,43 @@ Getting Started
    - Press `a` for Android, `i` for iOS, or scan the QR.
 
 Deploy to GitHub Pages
-- A workflow is included at `.github/workflows/deploy-gh-pages.yml`.
+- The repo does not ship with an Actions workflow, but you can add one like the following under `.github/workflows/deploy-gh-pages.yml` in your repository (create the directories if they do not exist):
+
+  ```yaml
+  name: Deploy Expo Web to GitHub Pages
+
+  on:
+    push:
+      branches: [main]
+
+  jobs:
+    build-and-deploy:
+      runs-on: ubuntu-latest
+      defaults:
+        run:
+          working-directory: frontend
+      steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-node@v4
+          with:
+            node-version: 20
+            cache: 'npm'
+            cache-dependency-path: frontend/package-lock.json
+        - run: npm ci
+        - run: npx expo export:web
+        - name: Deploy to GitHub Pages
+          uses: peaceiris/actions-gh-pages@v3
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: frontend/dist
+  ```
 - Steps:
   1) Create a GitHub repo and push the project (branch `main`).
-  2) In GitHub → Settings → Pages → set "Build and deployment" to "GitHub Actions".
-  3) Push to `main`; the action builds a static web export and deploys it.
-  4) Your site will be available at `https://<user>.github.io/<repo>/`.
-  5) If you use a custom domain, add a `CNAME` file to `frontend/dist` during deployment or configure it in the Pages settings.
+  2) Commit the workflow above (or a variation) and push to `main`.
+  3) In GitHub → Settings → Pages → set "Build and deployment" to "GitHub Actions".
+  4) Push to `main`; the action builds a static web export and deploys it.
+  5) Your site will be available at `https://<user>.github.io/<repo>/`.
+  6) If you use a custom domain, add a `CNAME` file to `frontend/dist` during deployment or configure it in the Pages settings.
 
 Branding
 - Replace icon/splash assets later by editing `app.config.ts` and adding files under `assets/`.
