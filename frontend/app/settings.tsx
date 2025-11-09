@@ -1,48 +1,79 @@
 import React from "react";
-import GradientBackground from "@/src/components/shared/GradientBackground";
-import Header from "@/src/components/layout/Header";
-import { View, Text, StyleSheet, Pressable } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { StyleSheet, Text, View } from "react-native";
+import MainLayout from "@/src/components/templates/MainLayout/MainLayout";
+import ActionRow from "@/src/components/molecules/ActionRow/ActionRow";
+import Button from "@/src/components/atoms/Button/Button";
 import { useThemeStore } from "@/src/store/themeStore";
+import { useUserPreferences } from "@/src/contexts/UserContext/UserContext";
+
+const TIMER_OPTIONS = [15, 30, 45];
 
 export default function SettingsScreen() {
   const { mode, setMode } = useThemeStore();
-  return (
-    <GradientBackground>
-      <Header />
-      <View style={{ padding: 18 }}>
-        <Text style={styles.title}>Apariencia</Text>
-        <Row title="Tema del sistema" active={mode === "system"} onPress={() => setMode("system")} icon="phone-portrait-outline" />
-        <Row title="Modo claro" active={mode === "light"} onPress={() => setMode("light")} icon="sunny-outline" />
-        <Row title="Modo oscuro" active={mode === "dark"} onPress={() => setMode("dark")} icon="moon-outline" />
-      </View>
-    </GradientBackground>
-  );
-}
+  const { autoPlay, toggleAutoPlay, defaultTimerMinutes, setDefaultTimerMinutes } = useUserPreferences();
 
-function Row({ title, icon, active, onPress }: { title: string; icon: any; active?: boolean; onPress: () => void }) {
   return (
-    <Pressable onPress={onPress} style={[styles.row, active && styles.rowActive]} android_ripple={{ color: "#ffffff22" }}>
-      <Ionicons name={icon} size={20} color="#fff" />
-      <Text style={styles.rowText}>{title}</Text>
-      {active && <Ionicons name="checkmark-circle" size={18} color="#22d3ee" />}
-    </Pressable>
+    <MainLayout contentStyle={styles.content}>
+      {/* Preferencias visuales del usuario. */}
+      <View style={styles.section}>
+        <Text style={styles.title}>Apariencia</Text>
+        <ActionRow
+          icon="phone-portrait-outline"
+          title="Seguir tema del sistema"
+          active={mode === "system"}
+          onPress={() => setMode("system")}
+        />
+        <ActionRow icon="sunny-outline" title="Modo claro" active={mode === "light"} onPress={() => setMode("light")} />
+        <ActionRow icon="moon-outline" title="Modo oscuro" active={mode === "dark"} onPress={() => setMode("dark")} />
+      </View>
+
+      <View style={styles.section}>
+        {/* Opciones relacionadas al comportamiento del reproductor. */}
+        <Text style={styles.title}>Reproducción</Text>
+        <ActionRow
+          icon="play-outline"
+          title="Autoreproducir al abrir"
+          subtitle={autoPlay ? "Activado" : "Desactivado"}
+          active={autoPlay}
+          onPress={toggleAutoPlay}
+        />
+        <Text style={styles.subtitle}>Duración predeterminada del temporizador</Text>
+        <View style={styles.timerRow}>
+          {TIMER_OPTIONS.map((minutes) => (
+            <Button
+              key={minutes}
+              label={`${minutes} min`}
+              variant={minutes === defaultTimerMinutes ? "primary" : "secondary"}
+              onPress={() => setDefaultTimerMinutes(minutes)}
+            />
+          ))}
+        </View>
+      </View>
+    </MainLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  title: { color: "#fff", fontWeight: "800", fontSize: 18, marginBottom: 10 },
-  row: {
-    backgroundColor: "#ffffff12",
-    borderColor: "#ffffff1a",
-    borderWidth: 1,
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 10,
-    flexDirection: "row",
-    alignItems: "center"
+  content: {
+    paddingHorizontal: 18,
+    paddingTop: 24
   },
-  rowActive: { borderColor: "#22d3ee" },
-  rowText: { flex: 1, color: "#e2e8f0", marginLeft: 12 }
+  section: {
+    marginBottom: 24
+  },
+  title: {
+    color: "#f8fafc",
+    fontSize: 22,
+    fontWeight: "800",
+    marginBottom: 12
+  },
+  subtitle: {
+    color: "#cbd5e1",
+    marginBottom: 12,
+    marginTop: 4
+  },
+  timerRow: {
+    flexDirection: "row",
+    columnGap: 12
+  }
 });
-
