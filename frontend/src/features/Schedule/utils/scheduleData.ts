@@ -13,4 +13,3 @@ export const weeklySchedule: Show[] = [
   { title: "Deportes al Día", time: "17:00 – 18:00", days: "Lun–Vie" },
   { title: "Noches de Baladas", time: "20:00 – 22:00", days: "Lun–Dom" }
 ];
-

@@ -1,19 +1,25 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { weeklySchedule } from "./data";
+import { StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { weeklySchedule } from "@/src/features/Schedule/utils/scheduleData";
 
+/**
+ * Lista estilizada de programas que se reutiliza en diversas vistas.
+ */
 export default function ScheduleList() {
   return (
     <View style={styles.container}>
-      {weeklySchedule.map((s, idx) => (
-        <View key={`${s.title}-${idx}`} style={styles.item}>
+      {weeklySchedule.map((show, idx) => (
+        <View key={`${show.title}-${idx}`} style={styles.item}>
           <View style={styles.left}>
             <Ionicons name="musical-notes-outline" size={20} color="#a5b4fc" />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.title}>{s.title}</Text>
-            <Text style={styles.meta}>{s.time} • {s.days}</Text>
+            <Text style={styles.title}>{show.title}</Text>
+            <Text style={styles.meta}>
+              {show.time} • {show.days}
+            </Text>
+            {show.host && <Text style={styles.host}>Con {show.host}</Text>}
           </View>
         </View>
       ))}
@@ -43,6 +49,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#3730a330"
   },
   title: { color: "#fff", fontWeight: "700" },
-  meta: { color: "#cbd5e1", marginTop: 4 }
+  meta: { color: "#cbd5e1", marginTop: 4 },
+  host: { color: "#94a3b8", marginTop: 2 }
 });
-

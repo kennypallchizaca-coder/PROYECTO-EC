@@ -3,10 +3,11 @@ import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { THEME } from "@/src/constants/config";
 import { StatusBar } from "expo-status-bar";
+import { UserProvider } from "@/src/contexts/UserContext/UserContext";
 
 export default function RootLayout() {
   return (
-    <>
+    <UserProvider>
       <StatusBar style="light" />
       <Tabs
         screenOptions={{
@@ -44,7 +45,7 @@ export default function RootLayout() {
           )
         }} />
       </Tabs>
-    </>
+    </UserProvider>
   );
 }
 

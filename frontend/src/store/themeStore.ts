@@ -7,6 +7,9 @@ type ThemeState = {
   setMode: (m: ThemeMode) => void;
 };
 
+/**
+ * Mantiene la preferencia de tema seleccionada por el usuario.
+ */
 export const useThemeStore = create<ThemeState>((set) => ({
   mode: "system",
   setMode: (mode) => set({ mode })

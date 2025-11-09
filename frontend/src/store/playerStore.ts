@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { Audio, AVPlaybackStatusSuccess } from "expo-av";
-import { configureAudio } from "@/src/lib/audio";
+import { configureAudio } from "@/src/services/audio";
 import { STATION } from "@/src/constants/config";
 
 type PlayerState = {
@@ -16,6 +16,9 @@ type PlayerState = {
   setStatus: (s: AVPlaybackStatusSuccess) => void;
 };
 
+/**
+ * Almacén global que controla el estado del reproductor de audio en vivo.
+ */
 export const usePlayer = create<PlayerState>((set, get) => ({
   sound: null,
   status: null,
