@@ -1,3 +1,5 @@
-// Punto de entrada central para exportar las páginas por feature.
-export { default as HomePage } from "@/src/features/Home/pages/HomePage";
-export { SchedulePage } from "@/src/features/Schedule";
+// Punto de entrada central para exportar las pantallas por feature.
+export { default as HomeScreen } from "@/src/features/radio/screens/HomeScreen";
+export { default as ScheduleScreen } from "@/src/features/radio/screens/ScheduleScreen";
+export { default as ContactScreen } from "@/src/features/radio/screens/ContactScreen";
+export { default as SettingsScreen } from "@/src/features/settings/screens/SettingsScreen";

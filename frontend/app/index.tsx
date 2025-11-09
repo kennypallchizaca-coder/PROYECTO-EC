@@ -1,7 +1,3 @@
-import React from "react";
-import { HomePage } from "@/src/features";
+import HomeScreen from "@/src/features/radio/screens/HomeScreen";
 
-export default function HomeScreen() {
-  return <HomePage />;
-}
-
+export default HomeScreen;

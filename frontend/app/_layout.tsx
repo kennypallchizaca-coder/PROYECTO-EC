@@ -1,9 +1,9 @@
 import React from "react";
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { THEME } from "@/src/constants/config";
+import { THEME } from "@/src/features/radio/constants/station";
 import { StatusBar } from "expo-status-bar";
-import { UserProvider } from "@/src/contexts/UserContext/UserContext";
+import { UserProvider } from "@/src/features/settings/context/UserPreferencesContext";
 
 export default function RootLayout() {
   return (

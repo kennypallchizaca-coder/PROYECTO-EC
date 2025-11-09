@@ -1,6 +1,3 @@
-import React from "react";
-import { SchedulePage } from "@/src/features";
+import ScheduleScreen from "@/src/features/radio/screens/ScheduleScreen";
 
-export default function ScheduleScreen() {
-  return <SchedulePage />;
-}
+export default ScheduleScreen;
