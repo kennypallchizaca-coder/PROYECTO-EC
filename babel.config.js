@@ -8,12 +8,10 @@ module.exports = function (api) {
         {
           root: ['.'],
           alias: {
-            // Map "@/" imports to the frontend folder from the repository root
-            '@': './frontend'
-          }
-        }
+            '@': './src',
+          },
+        },
       ],
-      // expo-router/babel is deprecated in SDK 50+. babel-preset-expo already includes needed transforms.
-    ]
+    ],
   };
 };

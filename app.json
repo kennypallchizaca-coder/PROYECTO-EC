@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "RadioWave",
+    "slug": "radio-wave",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "radiowave",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#0f172a"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "UIBackgroundModes": ["audio"]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0f172a"
+      },
+      "permissions": ["android.permission.FOREGROUND_SERVICE"],
+      "package": "com.radiowave.app",
+      "foregroundService": {
+        "notificationTitle": "RadioWave en reproducción",
+        "notificationBody": "Tu emisora sigue sonando en segundo plano"
+      }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "radio-wave-example"
+      }
+    }
+  }
+}
