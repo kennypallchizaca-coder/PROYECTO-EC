@@ -1,6 +1,6 @@
 export const STATION = {
-  name: "RADIO SISID ECUADOR",
-  tagline: "La voz de la comunidad",
+  name: "Radio sisid Ecuador",
+  tagline: "Desde Mineapolis Minnesota para el mundo",
   // Replace with your real stream URL
   streamUrl: process.env.EXPO_PUBLIC_STREAM_URL || "https://live.hunter.fm/80s_high",
   website: "https://example.com",
