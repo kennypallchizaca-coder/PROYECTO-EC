@@ -7,7 +7,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { usePlayer } from '../context/PlayerContext';
 import HomeScreen from '../screens/HomeScreen';
 import RadioPlayerScreen from '../screens/RadioPlayerScreen';
-import ScheduleScreen from '../screens/ScheduleScreen';
 import ContactScreen from '../screens/ContactScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import { buildNavigationTheme } from '../styles/theme';
@@ -15,29 +14,32 @@ import { buildNavigationTheme } from '../styles/theme';
 export type TabParamList = {
   Home: undefined;
   Player: undefined;
-  Schedule: undefined;
   Contact: undefined;
   Settings: undefined;
 };
 
 export type RootStackParamList = {
   Root: NavigatorScreenParams<TabParamList>;
-  RadioPlayer: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
+// Work around React 19 + React Navigation TS props inference friction
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const TabNav = Tab.Navigator as unknown as React.ComponentType<any>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const StackNav = Stack.Navigator as unknown as React.ComponentType<any>;
 
 const TabNavigator = () => {
   const { theme } = usePlayer();
 
   return (
-    <Tab.Navigator
+    <TabNav
+      initialRouteName="Home"
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.muted,
-        // Ajustamos la altura del tab bar para imitar la maqueta.
         tabBarStyle: {
           backgroundColor: theme.colors.card,
           borderTopColor: theme.colors.border,
@@ -45,12 +47,10 @@ const TabNavigator = () => {
           paddingBottom: 12,
           paddingTop: 12,
         },
-        // Iconos por pestaña usando Ionicons para mantener consistencia.
         tabBarIcon: ({ color, size }) => {
           const iconMap: Record<keyof TabParamList, React.ComponentProps<typeof Ionicons>['name']> = {
             Home: 'radio',
             Player: 'play-circle',
-            Schedule: 'calendar',
             Contact: 'chatbubbles',
             Settings: 'settings',
           };
@@ -61,10 +61,9 @@ const TabNavigator = () => {
     >
       <Tab.Screen name="Home" component={HomeScreen} options={{ title: 'Inicio' }} />
       <Tab.Screen name="Player" component={RadioPlayerScreen} options={{ title: 'Reproductor' }} />
-      <Tab.Screen name="Schedule" component={ScheduleScreen} options={{ title: 'Programación' }} />
       <Tab.Screen name="Contact" component={ContactScreen} options={{ title: 'Contacto' }} />
       <Tab.Screen name="Settings" component={SettingsScreen} options={{ title: 'Ajustes' }} />
-    </Tab.Navigator>
+    </TabNav>
   );
 };
 
@@ -73,10 +72,9 @@ const AppNavigator: React.FC = () => {
 
   return (
     <NavigationContainer theme={buildNavigationTheme(themeMode)}>
-      <Stack.Navigator>
+      <StackNav>
         <Stack.Screen name="Root" component={TabNavigator} options={{ headerShown: false }} />
-        <Stack.Screen name="RadioPlayer" component={RadioPlayerScreen} options={{ title: 'Reproductor' }} />
-      </Stack.Navigator>
+      </StackNav>
     </NavigationContainer>
   );
 };

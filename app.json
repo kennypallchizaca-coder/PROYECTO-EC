@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "RadioWave",
-    "slug": "radio-wave",
+    "name": "Radio Sisid Ecuador",
+    "slug": "radio-sisid-ecuador",
     "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "radiowave",
+    "scheme": "radiosisid",
     "userInterfaceStyle": "automatic",
     "splash": {
       "resizeMode": "contain",
@@ -22,16 +22,17 @@
         "backgroundColor": "#0f172a"
       },
       "permissions": ["android.permission.FOREGROUND_SERVICE"],
-      "package": "com.radiowave.app",
+      "package": "com.radiosisid.app",
       "foregroundService": {
-        "notificationTitle": "RadioWave en reproducción",
+        "notificationTitle": "Radio Sisid Ecuador en reproducción",
         "notificationBody": "Tu emisora sigue sonando en segundo plano"
       }
     },
     "extra": {
       "eas": {
-        "projectId": "radio-wave-example"
+        "projectId": "radio-sisid-ecuador"
       }
     }
   }
 }
+

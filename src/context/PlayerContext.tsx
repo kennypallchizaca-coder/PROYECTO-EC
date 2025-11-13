@@ -6,7 +6,8 @@ import { Station, getStationById } from '../services/radioAPI';
 import { AppTheme, ThemeMode, buildTheme } from '../styles/theme';
 
 // Clave única para persistir preferencias y última emisora escuchada.
-const PREFERENCES_KEY = '@radiowave/preferences';
+const PREFERENCES_KEY = '@radiosisid/preferences';
+const DEFAULT_STATION_ID = 'radio-sisid-ecuador';
 
 type PlayerContextValue = {
   currentStation: Station | null;
@@ -38,7 +39,7 @@ export const PlayerProvider: React.FC<React.PropsWithChildren> = ({ children }) 
   const [volume, setVolumeState] = useState(0.8);
   const [hydrated, setHydrated] = useState(false);
 
-  // Siempre que cambie el volumen en memoria, propagamos el valor al reproductor nativo.
+  // Propagamos el volumen al reproductor nativo.
   useEffect(() => {
     void setVolume(volume);
   }, [setVolume, volume]);
@@ -48,35 +49,26 @@ export const PlayerProvider: React.FC<React.PropsWithChildren> = ({ children }) 
     const restore = async () => {
       try {
         const savedRaw = await AsyncStorage.getItem(PREFERENCES_KEY);
-        if (!savedRaw) {
-          setHydrated(true);
-          return;
-        }
+        const saved = savedRaw
+          ? (JSON.parse(savedRaw) as {
+              themeMode?: ThemeMode;
+              autoPlay?: boolean;
+              volume?: number;
+              lastStationId?: string;
+            })
+          : {};
 
-        const saved = JSON.parse(savedRaw) as {
-          themeMode?: ThemeMode;
-          autoPlay?: boolean;
-          volume?: number;
-          lastStationId?: string;
-        };
+        if (saved.themeMode === 'dark' || saved.themeMode === 'light') setThemeMode(saved.themeMode);
+        if (typeof saved.autoPlay === 'boolean') setAutoPlay(saved.autoPlay);
+        if (typeof saved.volume === 'number') setVolumeState(saved.volume);
 
-        if (saved.themeMode === 'dark' || saved.themeMode === 'light') {
-          setThemeMode(saved.themeMode);
-        }
-
-        if (typeof saved.autoPlay === 'boolean') {
-          setAutoPlay(saved.autoPlay);
-        }
-
-        if (typeof saved.volume === 'number') {
-          setVolumeState(saved.volume);
-        }
-
-        if (saved.lastStationId) {
-          const station = await getStationById(saved.lastStationId);
-          if (station) {
-            setCurrentStation(station);
-            await loadStream(station.streamUrl, saved.volume ?? volume);
+        const targetId = saved.lastStationId ?? DEFAULT_STATION_ID;
+        const station = await getStationById(targetId);
+        if (station) {
+          setCurrentStation(station);
+          await loadStream(station.streamUrl, saved.volume ?? volume);
+          if (saved.autoPlay) {
+            await play();
           }
         }
       } catch (error) {
@@ -87,13 +79,11 @@ export const PlayerProvider: React.FC<React.PropsWithChildren> = ({ children }) 
     };
 
     restore();
-  }, [loadStream, volume]);
+  }, [loadStream, volume, play]);
 
   // Persistimos cualquier cambio relevante en tema, autoplay, volumen o emisora.
   const persistPreferences = useCallback(async () => {
-    if (!hydrated) {
-      return;
-    }
+    if (!hydrated) return;
 
     try {
       await AsyncStorage.setItem(
@@ -134,28 +124,21 @@ export const PlayerProvider: React.FC<React.PropsWithChildren> = ({ children }) 
     [autoPlay, loadStream, play, volume],
   );
 
-  // Alterna entre play y pause usando el estado del hook de audio.
   const togglePlayPause = useCallback(async () => {
-    if (!currentStation) {
-      return;
-    }
-
+    if (!currentStation) return;
     if (playback.isPlaying) {
       await pause();
       return;
     }
-
     if (!playback.isPlaying) {
       await play();
     }
   }, [currentStation, pause, play, playback.isPlaying]);
 
-  // Garantiza que el stream se detenga por completo.
   const stopPlayback = useCallback(async () => {
     await stop();
   }, [stop]);
 
-  // Normalizamos el volumen recibido y lo guardamos en estado + reproductor.
   const changeVolume = useCallback(
     async (newVolume: number) => {
       const normalized = Math.min(1, Math.max(0, newVolume));
@@ -173,7 +156,6 @@ export const PlayerProvider: React.FC<React.PropsWithChildren> = ({ children }) 
     setAutoPlay((prev) => !prev);
   }, []);
 
-  // Elimina la emisora actual y descarga el recurso de memoria.
   const clearStation = useCallback(async () => {
     await unload();
     setCurrentStation(null);
@@ -225,6 +207,5 @@ export const usePlayer = () => {
   if (!context) {
     throw new Error('usePlayer debe utilizarse dentro de un PlayerProvider');
   }
-
   return context;
 };

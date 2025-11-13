@@ -1,15 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { useNavigation } from '@react-navigation/native';
-
-import Logo from '../components/Logo';
-import IconButton from '../components/IconButton';
-import { usePlayer } from '../context/PlayerContext';
-import { TabParamList } from '../navigation/AppNavigator';
-import { Station, fetchStations } from '../services/radioAPI';
-import { formatBitrate } from '../utils/formatTime';
+formatBitrate } from '../utils/formatTime';
 
 export const HomeScreen: React.FC = () => {
   const navigation = useNavigation<BottomTabNavigationProp<TabParamList>>();
@@ -41,7 +30,7 @@ export const HomeScreen: React.FC = () => {
     <ScrollView style={{ backgroundColor: theme.colors.background }} contentContainerStyle={styles.container}>
       <Logo />
 
-      {activeStation ? (
+      {activeStation && (
         <View style={styles.heroWrapper}>
           <ImageBackground
             source={typeof activeStation.image === 'string' ? { uri: activeStation.image } : activeStation.image}
@@ -64,18 +53,11 @@ export const HomeScreen: React.FC = () => {
                 {activeStation.description}
               </Text>
               <View style={styles.ctaRow}>
-                <IconButton
-                  size={68}
-                  icon={'play'}
-                  label={isCurrent && isPlaying ? 'Ir al reproductor' : 'Escuchar ahora'}
-                  onPress={handleListen}
-                />
+                <IconButton size={68} icon={isPlaying ? 'pause' : 'play'} label="Escuchar ahora" onPress={handleListen} />
               </View>
             </LinearGradient>
           </ImageBackground>
         </View>
-      ) : (
-        <Text style={[styles.meta, { color: theme.colors.muted }]}>Preparando tu emisora…</Text>
       )}
     </ScrollView>
   );
@@ -133,5 +115,7 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
+
+
 
 

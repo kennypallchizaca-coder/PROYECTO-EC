@@ -1,42 +1,16 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import Svg, { Path, Rect, Text as SvgText } from 'react-native-svg';
-
-import { usePlayer } from '../context/PlayerContext';
+import { Image, ImageSourcePropType, StyleSheet, View } from 'react-native';
 
 type LogoProps = {
   width?: number;
-  height?: number;
 };
 
-export const Logo: React.FC<LogoProps> = ({ width = 220, height = 72 }) => {
-  const { theme } = usePlayer();
+const logoSource: ImageSourcePropType = require('../images/logoradiosisidec.jpg');
 
-  // SVG simple para imitar el bloque del mockup.
+export const Logo: React.FC<LogoProps> = ({ width = 220 }) => {
   return (
-    <View accessibilityRole="image" accessibilityLabel="images/logoradiosid ec  .svg" style={styles.wrapper}>
-      <Svg width={width} height={height} viewBox="0 0 220 72">
-        <Rect width={220} height={72} rx={18} fill={theme.colors.primary} />
-        <SvgText
-          x="50%"
-          y="50%"
-          fill={theme.colors.onPrimary}
-          fontSize={32}
-          fontWeight="700"
-          fontFamily="System"
-          textAnchor="middle"
-          alignmentBaseline="middle"
-        >
-          RadioWave
-        </SvgText>
-        <Path
-          d="M28 18C42 32 42 40 28 54"
-          stroke={theme.colors.onPrimary}
-          strokeWidth={6}
-          strokeLinecap="round"
-          fill="none"
-        />
-      </Svg>
+    <View accessibilityRole="image" accessibilityLabel="Logo Radio Sisid Ecuador" style={styles.wrapper}>
+      <Image source={logoSource} style={{ width, height: 72, borderRadius: 18 }} resizeMode="contain" />
     </View>
   );
 };

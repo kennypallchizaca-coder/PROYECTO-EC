@@ -1,0 +1,12 @@
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { useNavigation } from '@react-navigation/native';
+
+import Logo from '../components/Logo';
+import IconButton from '../components/IconButton';
+import { usePlayer } from '../context/PlayerContext';
+import { TabParamList } from '../navigation/AppNavigator';
+import { Station, fetchStations } from '../services/radioAPI';
+import { 

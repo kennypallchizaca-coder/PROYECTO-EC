@@ -1,0 +1,136 @@
+   1: import React, { useCallback, useEffect, useMemo, useState } from 'react';
+   1: import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
+   1: import { LinearGradient } from 'expo-linear-gradient';
+   1: import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+   1: import { useNavigation } from '@react-navigation/native';
+   1: 
+   1: import Logo from '../components/Logo';
+   1: import IconButton from '../components/IconButton';
+   1: import { usePlayer } from '../context/PlayerContext';
+   1: import { TabParamList } from '../navigation/AppNavigator';
+   1: import { Station, fetchStations } from '../services/radioAPI';
+   1: import { formatBitrate } from '../utils/formatTime';
+   1: 
+   1: export const HomeScreen: React.FC = () => {
+   1:   const navigation = useNavigation<BottomTabNavigationProp<TabParamList>>();
+   1:   const { theme, currentStation, selectStation, isPlaying } = usePlayer();
+   1:   const [station, setStation] = useState<Station | null>(null);
+   1: 
+   1:   useEffect(() => {
+   1:     const load = async () => {
+   1:       const data = await fetchStations();
+   1:       setStation(data[0] ?? null);
+   1:     };
+   1:     load();
+   1:   }, []);
+   1: 
+   1:   const activeStation = useMemo(() => currentStation ?? station, [currentStation, station]);
+   1:   const isCurrent = activeStation && currentStation?.id === activeStation.id;
+   1: 
+   1:   const handleListen = useCallback(async () => {
+   1:     if (!activeStation) return;
+   1:     if (isCurrent && isPlaying) {
+   1:       navigation.navigate('Player');
+   1:       return;
+   1:     }
+   1:     await selectStation(activeStation);
+   1:     navigation.navigate('Player');
+   1:   }, [activeStation, isCurrent, isPlaying, navigation, selectStation]);
+   1: 
+   1:   return (
+   1:     <ScrollView style={{ backgroundColor: theme.colors.background }} contentContainerStyle={styles.container}>
+   1:       <Logo />
+   1: 
+   1:       {activeStation ? (
+   1:         <View style={styles.heroWrapper}>
+   1:           <ImageBackground
+   1:             source={typeof activeStation.image === 'string' ? { uri: activeStation.image } : activeStation.image}
+   1:             style={styles.heroImage}
+   1:             imageStyle={styles.heroImageStyle}
+   1:             accessibilityIgnoresInvertColors
+   1:           >
+   1:             <LinearGradient
+   1:               colors={['rgba(15,23,42,0.1)', 'rgba(15,23,42,0.85)']}
+   1:               start={{ x: 0, y: 0 }}
+   1:               end={{ x: 0, y: 1 }}
+   1:               style={styles.heroOverlay}
+   1:             >
+   1:               <Text style={[styles.pill, { color: theme.colors.onPrimary, backgroundColor: theme.colors.primary }]}>LIVE</Text>
+   1:               <Text style={[styles.title, { color: theme.colors.onPrimary }]}>{activeStation.name}</Text>
+   1:               <Text style={[styles.meta, { color: theme.colors.onPrimary }]}>
+   1:                 {`${activeStation.genre} · ${activeStation.country} · ${formatBitrate(activeStation.bitrateKbps)}`}
+   1:               </Text>
+   1:               <Text style={[styles.description, { color: theme.colors.onPrimary }]} numberOfLines={2}>
+   1:                 {activeStation.description}
+   1:               </Text>
+   1:               <View style={styles.ctaRow}>
+   1:                 <IconButton
+   1:                   size={68}
+   1:                   icon={'play'}
+   1:                   label={isCurrent && isPlaying ? 'Ir al reproductor' : 'Escuchar ahora'}
+   1:                   onPress={handleListen}
+   1:                 />
+   1:               </View>
+   1:             </LinearGradient>
+   1:           </ImageBackground>
+   1:         </View>
+   1:       ) : (
+   1:         <Text style={[styles.meta, { color: theme.colors.muted }]}>Preparando tu emisora…</Text>
+   1:       )}
+   1:     </ScrollView>
+   1:   );
+   1: };
+   1: 
+   1: const styles = StyleSheet.create({
+   1:   container: {
+   1:     flex: 1,
+   1:     padding: 24,
+   1:     gap: 16,
+   1:   },
+   1:   heroWrapper: {
+   1:     borderRadius: 32,
+   1:     overflow: 'hidden',
+   1:   },
+   1:   heroImage: {
+   1:     height: 280,
+   1:     justifyContent: 'flex-end',
+   1:   },
+   1:   heroImageStyle: {
+   1:     borderRadius: 32,
+   1:   },
+   1:   heroOverlay: {
+   1:     padding: 24,
+   1:     gap: 10,
+   1:   },
+   1:   pill: {
+   1:     alignSelf: 'flex-start',
+   1:     paddingHorizontal: 10,
+   1:     paddingVertical: 6,
+   1:     borderRadius: 999,
+   1:     fontSize: 12,
+   1:     fontWeight: '700',
+   1:     letterSpacing: 1,
+   1:   },
+   1:   title: {
+   1:     fontSize: 26,
+   1:     fontWeight: '800',
+   1:   },
+   1:   meta: {
+   1:     fontSize: 13,
+   1:     letterSpacing: 0.8,
+   1:     textTransform: 'uppercase',
+   1:   },
+   1:   description: {
+   1:     fontSize: 15,
+   1:     lineHeight: 20,
+   1:   },
+   1:   ctaRow: {
+   1:     marginTop: 8,
+   1:     flexDirection: 'row',
+   1:     alignItems: 'center',
+   1:     gap: 12,
+   1:   },
+   1: });
+   1: 
+   1: export default HomeScreen;
+   1: 

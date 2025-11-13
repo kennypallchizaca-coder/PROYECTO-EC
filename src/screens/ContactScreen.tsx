@@ -15,24 +15,18 @@ const iconByType: Record<(typeof CONTACT_CHANNELS)[number]['type'], React.Compon
 export const ContactScreen: React.FC = () => {
   const { theme } = usePlayer();
 
-  // Intentamos abrir el enlace asociado al canal usando Linking.
   const handlePress = useCallback(async (url?: string) => {
-    if (!url) {
-      return;
-    }
-
+    if (!url) return;
     const supported = await Linking.canOpenURL(url);
     if (!supported) {
       Alert.alert('No se puede abrir el enlace', 'Copia el dato y pégalo en tu navegador o app favorita.');
       return;
     }
-
     await Linking.openURL(url);
   }, []);
 
   return (
     <ScrollView style={{ backgroundColor: theme.colors.background }} contentContainerStyle={styles.container}>
-      {/* La cabecera funciona como recordatorio del propósito de la pantalla. */}
       <View style={styles.heroWrapper}>
         <LinearGradient
           colors={[theme.colors.surface, theme.colors.card]}
@@ -40,14 +34,11 @@ export const ContactScreen: React.FC = () => {
           end={{ x: 1, y: 1 }}
           style={styles.heroCard}
         >
-          <Text style={[styles.heroTitle, { color: theme.colors.text }]}>Contacto directo</Text>
-          <Text style={[styles.heroDescription, { color: theme.colors.muted }]}>
-            Escríbenos en el canal que prefieras y cuéntanos qué te gustaría escuchar.
-          </Text>
+          <Text style={[styles.heroTitle, { color: theme.colors.text }]}>Contacto</Text>
+          <Text style={[styles.heroDescription, { color: theme.colors.muted }]}>Escríbenos en el canal que prefieras.</Text>
         </LinearGradient>
       </View>
 
-      {/* Listamos cada canal de contacto como una tarjeta táctil con icono. */}
       {CONTACT_CHANNELS.map((channel) => (
         <TouchableOpacity
           key={channel.id}
@@ -130,3 +121,4 @@ const styles = StyleSheet.create({
 });
 
 export default ContactScreen;
+

@@ -68,30 +68,31 @@ const radius: RadiusScale = {
 };
 
 const lightColors: ColorPalette = {
-  background: '#f8fafc',
-  surface: '#e2e8f0',
-  card: '#ffffff',
-  primary: '#f97316',
-  onPrimary: '#fffbeb',
-  text: '#0f172a',
-  muted: '#64748b',
-  border: '#cbd5f5',
-  success: '#10b981',
-  danger: '#ef4444',
+  background: '#fff6f6',   // Fondo claro con un tono cálido sutil
+  surface: '#ffffff',      // Superficie de tarjetas o contenedores
+  card: '#ffe1e1',         // Tarjetas con leve tono rojizo para identidad
+  primary: '#E20613',      // Rojo institucional de Radio Sisid
+  onPrimary: '#ffffff',    // Texto claro sobre el rojo
+  text: '#1a1a1a',         // Texto principal oscuro
+  muted: '#6b7280',        // Texto secundario
+  border: '#f0c4c4',       // Bordes suaves acordes al rojo
+  success: '#16a34a',      // Verde para estados positivos
+  danger: '#dc2626',       // Rojo oscuro para errores
 };
 
 const darkColors: ColorPalette = {
-  background: '#0f172a',
-  surface: '#1e293b',
-  card: '#1e293b',
-  primary: '#fb923c',
-  onPrimary: '#0f172a',
-  text: '#e2e8f0',
-  muted: '#94a3b8',
-  border: '#334155',
-  success: '#34d399',
-  danger: '#f87171',
+  background: '#121212',   // Fondo principal oscuro
+  surface: '#1e1e1e',      // Superficie de secciones
+  card: '#2a2a2a',         // Tarjetas o bloques
+  primary: '#ff4b4b',      // Rojo brillante adaptado al modo oscuro
+  onPrimary: '#ffffff',    // Texto claro sobre el rojo
+  text: '#f5f5f5',         // Texto principal claro
+  muted: '#9ca3af',        // Texto secundario gris
+  border: '#2f2f2f',       // Bordes discretos
+  success: '#22c55e',      // Verde para confirmaciones
+  danger: '#ef4444',       // Rojo vibrante para errores
 };
+
 
 export const buildTheme = (mode: ThemeMode): AppTheme => ({
   mode,

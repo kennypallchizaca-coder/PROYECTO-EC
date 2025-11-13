@@ -17,7 +17,6 @@ export const RadioPlayerScreen: React.FC = () => {
     }
   }, [currentStation?.website]);
 
-  // Estado inicial cuando aún no se ha seleccionado ninguna emisora desde Inicio.
   if (!currentStation) {
     return (
       <View style={[styles.emptyStateContainer, { backgroundColor: theme.colors.background }]}> 
@@ -29,10 +28,9 @@ export const RadioPlayerScreen: React.FC = () => {
 
   return (
     <ScrollView style={{ backgroundColor: theme.colors.background }} contentContainerStyle={styles.container}>
-      {/* La portada se renderiza como imagen a pantalla completa con un gradiente para mejorar la legibilidad. */}
       <View style={styles.heroWrapper}>
         <ImageBackground
-          source={{ uri: currentStation.image }}
+          source={typeof currentStation.image === 'string' ? { uri: currentStation.image } : currentStation.image}
           style={styles.heroImage}
           imageStyle={styles.heroImageStyle}
           accessibilityIgnoresInvertColors
@@ -43,7 +41,12 @@ export const RadioPlayerScreen: React.FC = () => {
             end={{ x: 0, y: 1 }}
             style={styles.heroOverlay}
           >
-            <Text style={[styles.heroBadge, { color: theme.colors.onPrimary, backgroundColor: theme.colors.primary }]}>EN VIVO</Text>
+            <View style={styles.badgesRow}>
+              <Text style={[styles.heroBadge, { color: theme.colors.onPrimary, backgroundColor: theme.colors.primary }]}>EN VIVO</Text>
+              {currentStation.bitrateKbps && currentStation.bitrateKbps >= 192 ? (
+                <Text style={[styles.heroBadge, { color: theme.colors.onPrimary, backgroundColor: '#64748b' }]}>HD</Text>
+              ) : null}
+            </View>
             <Text style={[styles.heroTitle, { color: theme.colors.onPrimary }]}>{currentStation.name}</Text>
             <Text style={[styles.heroMeta, { color: theme.colors.onPrimary }]}>
               {`${currentStation.genre} · ${currentStation.country}`}
@@ -52,7 +55,6 @@ export const RadioPlayerScreen: React.FC = () => {
         </ImageBackground>
       </View>
 
-      {/* La tarjeta inferior replica los controles y metadatos del diseño de referencia. */}
       <View style={[styles.card, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
         <Text style={[styles.description, { color: theme.colors.text }]}>{currentStation.description}</Text>
         <View style={styles.metaRow}>
@@ -110,6 +112,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     letterSpacing: 1,
+  },
+  badgesRow: {
+    flexDirection: 'row',
+    gap: 8,
   },
   heroTitle: {
     fontSize: 30,

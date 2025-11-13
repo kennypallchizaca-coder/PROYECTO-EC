@@ -14,7 +14,6 @@ type PlayerControlsProps = {
 export const PlayerControls: React.FC<PlayerControlsProps> = ({ onPlayPause, onStop }) => {
   const { theme, isPlaying, playbackDuration, playbackPosition, volume, changeVolume } = usePlayer();
 
-  // Las acciones principales se presentan con íconos grandes para replicar la UI del diseño.
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
       <View style={styles.timeWrapper}>
@@ -23,14 +22,9 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({ onPlayPause, onS
         <Text style={[styles.timeText, { color: theme.colors.text }]}>{formatTime(playbackDuration)}</Text>
       </View>
       <View style={styles.controlsRow}>
-        <IconButton
-          icon={isPlaying ? 'pause' : 'play'}
-          label={isPlaying ? 'Pausar reproducción' : 'Reproducir emisora'}
-          onPress={onPlayPause}
-        />
+        <IconButton size={68} icon={isPlaying ? 'pause' : 'play'} label={isPlaying ? 'Pausar reproducción' : 'Reproducir emisora'} onPress={onPlayPause} />
         <IconButton icon="stop" label="Detener reproducción" onPress={onStop} variant="ghost" />
       </View>
-      {/* El control de volumen usa el slider nativo para mantener accesibilidad. */}
       <View accessibilityRole="adjustable" style={styles.sliderWrapper}>
         <Text style={[styles.sectionLabel, { color: theme.colors.muted }]}>Volumen</Text>
         <Slider

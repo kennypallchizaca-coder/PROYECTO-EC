@@ -1,0 +1,131 @@
+   1: import React, { useCallback, useEffect, useMemo, useState } from 'react';
+   2: import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
+   3: import { LinearGradient } from 'expo-linear-gradient';
+   4: import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+   5: import { useNavigation } from '@react-navigation/native';
+   6: 
+   7: import Logo from '../components/Logo';
+   8: import IconButton from '../components/IconButton';
+   9: import { usePlayer } from '../context/PlayerContext';
+  10: import { TabParamList } from '../navigation/AppNavigator';
+  11: import { Station, fetchStations } from '../services/radioAPI';
+  12: import { formatBitrate } from '../utils/formatTime';
+  13: 
+  14: export const HomeScreen: React.FC = () => {
+  15:   const navigation = useNavigation<BottomTabNavigationProp<TabParamList>>();
+  16:   const { theme, currentStation, selectStation, isPlaying } = usePlayer();
+  17:   const [station, setStation] = useState<Station | null>(null);
+  18: 
+  19:   useEffect(() => {
+  20:     const load = async () => {
+  21:       const data = await fetchStations();
+  22:       setStation(data[0] ?? null);
+  23:     };
+  24:     load();
+  25:   }, []);
+  26: 
+  27:   const activeStation = useMemo(() => currentStation ?? station, [currentStation, station]);
+  28:   const isCurrent = activeStation && currentStation?.id === activeStation.id;
+  29: 
+  30:   const handleListen = useCallback(async () => {
+  31:     if (!activeStation) return;
+  32:     if (isCurrent && isPlaying) {
+  33:       navigation.navigate('Player');
+  34:       return;
+  35:     }
+  36:     await selectStation(activeStation);
+  37:     navigation.navigate('Player');
+  38:   }, [activeStation, isCurrent, isPlaying, navigation, selectStation]);
+  39: 
+  40:   return (
+  41:     <ScrollView style={{ backgroundColor: theme.colors.background }} contentContainerStyle={styles.container}>
+  42:       <Logo />
+  43: 
+  44:       {activeStation && (
+  45:         <View style={styles.heroWrapper}>
+  46:           <ImageBackground
+  47:             source={typeof activeStation.image === 'string' ? { uri: activeStation.image } : activeStation.image}
+  48:             style={styles.heroImage}
+  49:             imageStyle={styles.heroImageStyle}
+  50:             accessibilityIgnoresInvertColors
+  51:           >
+  52:             <LinearGradient
+  53:               colors={['rgba(15,23,42,0.1)', 'rgba(15,23,42,0.85)']}
+  54:               start={{ x: 0, y: 0 }}
+  55:               end={{ x: 0, y: 1 }}
+  56:               style={styles.heroOverlay}
+  57:             >
+  58:               <Text style={[styles.pill, { color: theme.colors.onPrimary, backgroundColor: theme.colors.primary }]}>LIVE</Text>
+  59:               <Text style={[styles.title, { color: theme.colors.onPrimary }]}>{activeStation.name}</Text>
+  60:               <Text style={[styles.meta, { color: theme.colors.onPrimary }]}>
+  61:                 {`${activeStation.genre} · ${activeStation.country} · ${formatBitrate(activeStation.bitrateKbps)}`}
+  62:               </Text>
+  63:               <Text style={[styles.description, { color: theme.colors.onPrimary }]} numberOfLines={2}>
+  64:                 {activeStation.description}
+  65:               </Text>
+  66:               <View style={styles.ctaRow}>
+  67:                 <IconButton size={68} icon={isPlaying ? 'pause' : 'play'} label="Escuchar ahora" onPress={handleListen} />
+  68:               </View>
+  69:             </LinearGradient>
+  70:           </ImageBackground>
+  71:         </View>
+  72:       )}
+  73:     </ScrollView>
+  74:   );
+  75: };
+  76: 
+  77: const styles = StyleSheet.create({
+  78:   container: {
+  79:     flex: 1,
+  80:     padding: 24,
+  81:     gap: 16,
+  82:   },
+  83:   heroWrapper: {
+  84:     borderRadius: 32,
+  85:     overflow: 'hidden',
+  86:   },
+  87:   heroImage: {
+  88:     height: 280,
+  89:     justifyContent: 'flex-end',
+  90:   },
+  91:   heroImageStyle: {
+  92:     borderRadius: 32,
+  93:   },
+  94:   heroOverlay: {
+  95:     padding: 24,
+  96:     gap: 10,
+  97:   },
+  98:   pill: {
+  99:     alignSelf: 'flex-start',
+ 100:     paddingHorizontal: 10,
+ 101:     paddingVertical: 6,
+ 102:     borderRadius: 999,
+ 103:     fontSize: 12,
+ 104:     fontWeight: '700',
+ 105:     letterSpacing: 1,
+ 106:   },
+ 107:   title: {
+ 108:     fontSize: 26,
+ 109:     fontWeight: '800',
+ 110:   },
+ 111:   meta: {
+ 112:     fontSize: 13,
+ 113:     letterSpacing: 0.8,
+ 114:     textTransform: 'uppercase',
+ 115:   },
+ 116:   description: {
+ 117:     fontSize: 15,
+ 118:     lineHeight: 20,
+ 119:   },
+ 120:   ctaRow: {
+ 121:     marginTop: 8,
+ 122:     flexDirection: 'row',
+ 123:     alignItems: 'center',
+ 124:     gap: 12,
+ 125:   },
+ 126: });
+ 127: 
+ 128: export default HomeScreen;
+ 129: 
+ 130: 
+ 131: 

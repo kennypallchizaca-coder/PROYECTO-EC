@@ -12,6 +12,7 @@ type IconButtonProps = {
   loading?: boolean;
   variant?: 'primary' | 'ghost';
   style?: ViewStyle;
+  size?: number;
 };
 
 export const IconButton: React.FC<IconButtonProps> = ({
@@ -22,6 +23,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
   loading = false,
   variant = 'primary',
   style,
+  size = 56,
 }) => {
   const { theme } = usePlayer();
 
@@ -38,15 +40,22 @@ export const IconButton: React.FC<IconButtonProps> = ({
       onPress={() => {
         void onPress();
       }}
-      style={[styles.base, { backgroundColor, borderColor, borderWidth: variant === 'ghost' ? 1 : 0 }, style]}
+      style={[
+        styles.base,
+        {
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          backgroundColor,
+          borderColor,
+          borderWidth: variant === 'ghost' ? 1 : 0,
+        },
+        style,
+      ]}
       disabled={disabled || loading}
       activeOpacity={0.7}
     >
-      {loading ? (
-        <ActivityIndicator color={iconColor} />
-      ) : (
-        <Ionicons name={icon} size={24} color={disabled ? theme.colors.muted : iconColor} />
-      )}
+      {loading ? <ActivityIndicator color={iconColor} /> : <Ionicons name={icon} size={24} color={disabled ? theme.colors.muted : iconColor} />}
     </TouchableOpacity>
   );
 };

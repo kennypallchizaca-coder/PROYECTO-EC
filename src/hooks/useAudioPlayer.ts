@@ -58,7 +58,7 @@ export const useAudioPlayer = (): UseAudioPlayerReturn => {
     if (soundRef.current) {
       try {
         await soundRef.current.stopAsync();
-      } catch (error) {
+      } catch {
         // Stop may throw if the sound is already stopped; ignore.
       }
 
