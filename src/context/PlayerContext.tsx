@@ -9,6 +9,13 @@ import { AppTheme, ThemeMode, buildTheme } from '../styles/theme';
 const PREFERENCES_KEY = '@radiosisid/preferences';
 const DEFAULT_STATION_ID = 'radio-sisid-ecuador';
 
+type StoredPreferences = {
+  themeMode?: ThemeMode;
+  autoPlay?: boolean;
+  volume?: number;
+  lastStationId?: string | null;
+};
+
 type PlayerContextValue = {
   currentStation: Station | null;
   isLoading: boolean;
@@ -49,26 +56,22 @@ export const PlayerProvider: React.FC<React.PropsWithChildren> = ({ children }) 
     const restore = async () => {
       try {
         const savedRaw = await AsyncStorage.getItem(PREFERENCES_KEY);
-        const saved = savedRaw
-          ? (JSON.parse(savedRaw) as {
-              themeMode?: ThemeMode;
-              autoPlay?: boolean;
-              volume?: number;
-              lastStationId?: string;
-            })
-          : {};
+        const saved: StoredPreferences = savedRaw ? (JSON.parse(savedRaw) as StoredPreferences) : {};
 
         if (saved.themeMode === 'dark' || saved.themeMode === 'light') setThemeMode(saved.themeMode);
         if (typeof saved.autoPlay === 'boolean') setAutoPlay(saved.autoPlay);
         if (typeof saved.volume === 'number') setVolumeState(saved.volume);
 
-        const targetId = saved.lastStationId ?? DEFAULT_STATION_ID;
-        const station = await getStationById(targetId);
-        if (station) {
-          setCurrentStation(station);
-          await loadStream(station.streamUrl, saved.volume ?? volume);
-          if (saved.autoPlay) {
-            await play();
+        const hasStoredStation = Object.prototype.hasOwnProperty.call(saved, 'lastStationId');
+        const targetId = hasStoredStation ? saved.lastStationId : DEFAULT_STATION_ID;
+        if (targetId) {
+          const station = await getStationById(targetId);
+          if (station) {
+            setCurrentStation(station);
+            await loadStream(station.streamUrl, saved.volume ?? volume);
+            if (saved.autoPlay) {
+              await play();
+            }
           }
         }
       } catch (error) {
@@ -92,13 +95,13 @@ export const PlayerProvider: React.FC<React.PropsWithChildren> = ({ children }) 
           themeMode,
           autoPlay,
           volume,
-          lastStationId: currentStation?.id,
+          lastStationId: currentStation ? currentStation.id : null,
         }),
       );
     } catch (error) {
       console.warn('No se pudo guardar la configuración del reproductor', error);
     }
-  }, [autoPlay, currentStation?.id, hydrated, themeMode, volume]);
+  }, [autoPlay, currentStation, hydrated, themeMode, volume]);
 
   useEffect(() => {
     persistPreferences();
@@ -135,10 +138,6 @@ export const PlayerProvider: React.FC<React.PropsWithChildren> = ({ children }) 
     }
   }, [currentStation, pause, play, playback.isPlaying]);
 
-  const stopPlayback = useCallback(async () => {
-    await stop();
-  }, [stop]);
-
   const changeVolume = useCallback(
     async (newVolume: number) => {
       const normalized = Math.min(1, Math.max(0, newVolume));
@@ -174,7 +173,7 @@ export const PlayerProvider: React.FC<React.PropsWithChildren> = ({ children }) 
       autoPlay,
       selectStation,
       togglePlayPause,
-      stop: stopPlayback,
+      stop,
       changeVolume,
       toggleTheme,
       toggleAutoPlay,
@@ -190,7 +189,7 @@ export const PlayerProvider: React.FC<React.PropsWithChildren> = ({ children }) 
       playback.isPlaying,
       playback.positionMillis,
       selectStation,
-      stopPlayback,
+      stop,
       themeMode,
       toggleAutoPlay,
       togglePlayPause,
