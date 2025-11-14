@@ -11,6 +11,7 @@ Aplicación de radio construida con Expo y React Native que permite reproducir e
 - Diseño responsivo inspirado en Atomic Design con componentes reutilizables.
 - Gradientes y superficies ricas usando `expo-linear-gradient` para replicar la maqueta.
 - Tipado completo con TypeScript y linting automático con ESLint + Prettier.
+- **Despliegue automático en GitHub Pages** mediante GitHub Actions.
 
 ## 📂 Estructura del proyecto
 
@@ -60,7 +61,11 @@ Cada carpeta agrupa una responsabilidad concreta (UI, lógica compartida, servic
    npm run ios      # compila en iOS
    npm run web      # vista web
    ```
-3. Analiza el código:
+3. Construye para producción web:
+   ```bash
+   npm run build:web  # genera el directorio dist/ con la aplicación web estática
+   ```
+4. Analiza el código:
    ```bash
    npm run lint
    ```
@@ -81,5 +86,25 @@ El archivo [`src/styles/theme.ts`](src/styles/theme.ts) define los tokens de dis
 1. Crea una rama desde `main`.
 2. Aplica cambios siguiendo la estructura existente.
 3. Ejecuta `npm run lint` antes de abrir un PR.
+
+## 🌐 Despliegue en GitHub Pages
+
+El proyecto está configurado para desplegarse automáticamente en GitHub Pages mediante GitHub Actions. El workflow se ejecuta automáticamente al hacer push a la rama `main`.
+
+### Configuración manual (solo primera vez):
+
+1. Ve a Settings > Pages en tu repositorio de GitHub
+2. En "Source", selecciona "GitHub Actions"
+3. El workflow `deploy-gh-pages.yml` se encargará del resto automáticamente
+
+### Acceso a la aplicación:
+
+Una vez desplegado, la aplicación estará disponible en:
+`https://<tu-usuario>.github.io/PROYECTO-EC/`
+
+El despliegue incluye:
+- Build automático de la versión web con Expo
+- Optimización de assets estáticos
+- Generación del archivo `.nojekyll` para compatibilidad con GitHub Pages
 
 ¡Listo! Tienes una base sólida para seguir ampliando funcionalidades (favoritos, historial, integración con APIs en tiempo real, etc.).

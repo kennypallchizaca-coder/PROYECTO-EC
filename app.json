@@ -28,6 +28,11 @@
         "notificationBody": "Tu emisora sigue sonando en segundo plano"
       }
     },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./src/assets/icons/favicon.png"
+    },
     "extra": {
       "eas": {
         "projectId": "radio-sisid-ecuador"
