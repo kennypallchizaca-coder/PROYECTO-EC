@@ -1,4 +1,5 @@
-# RadioWave
+# Radio-Sidid-Ecuador
+
 
 Aplicación de radio construida con Expo y React Native que permite reproducir emisoras en streaming con una arquitectura modular y escalable.
 
